@@ -1,110 +1,223 @@
-<?php 
-    // initialize errors variable
-$errors = "";
-
-	// connect to database
-$db = mysqli_connect("localhost", "root", "", "to-do-list");
-
-	// insert a quote if submit button is clicked
-if (isset($_POST['task_submit'])) {
-	if (empty($_POST['task'] and $_POST['date'] and $_POST['priority'] and $_POST['descs'] and $_POST['email'])) {
-		$errors = "You must fill in the task";
-	}else{
-		$task = $_POST['task'];
-		$date = $_POST['date'];
-		$priority= $_POST['priority'];
-		$descs= $_POST['descs'];
-		$email=$_POST['email'];
-		$sql = "INSERT INTO tasks (task,date,priority,descs,email) VALUES ('$task','$date','$priority','$descs','$email') ";
-		mysqli_query($db, $sql);
-		header('location: index.php');
-	}
-}
-
-if (isset($_GET['del_task'])) {
-	$id = $_GET['del_task'];
-
-	mysqli_query($db, "DELETE FROM tasks WHERE id=".$id);
-	header('location: index.php');
-}
-
-
+<?php
+require_once('authenticate.php');
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-	<title>ToDo List Application PHP and MySQL</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 
-	<link rel="stylesheet" type="text/css" href="style.css">
-	
+	<title>
+	Creating a simple to-do application - Part 1
+</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style type="text/css">
+		body {
+			color: #000000;
+			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;			
+		}
+		
+		form#add-new-task label{
+			width: 80px;
+			display: inline-block;
+			margin-right: 10px;
+		}
+		form#add-new-task input{
+			width: 150px;
+			margin-right: 10px;
+		}
+
+		form#add-new-task :required {
+			border-color: #11b8ff;
+			-webkit-box-shadow: 0 0 5px rgba(17, 184, 255, .75);
+			-moz-box-shadow: 0 0 5px rgba(17, 184, 255, .75);
+			-o-box-shadow: 0 0 5px rgba(17, 184, 255, .75);
+			-ms-box-shadow: 0 0 5px rgba(17, 184, 255, .75);
+			box-shadow: 0 0 5px rgba(17, 184, 255, .75);
+		}
+		
+		table {
+            width: 100%;
+        }
+        
+        table, tr, td, thead, tfoot, colgroup, col, caption {
+            margin: 0px;
+            border-spacing: 0px;
+        }
+        
+        table {
+            border: 1px solid #333333;
+        }
+        
+        table thead tr {
+            background-color: #d3edf8;
+        }
+        
+        table tbody tr td:last-child, table thead tr th:last-child, table tfoot tr th:last-child {
+            text-align: right;
+        }
+        
+        table tfoot tr th:first-child {
+            text-align: left;
+            background-color: #ffffff;
+            border-right: 1px solid #333333;
+        }
+        
+        table tbody tr td, table tbody tr th, table thead tr th, table thead tr td {
+            border-bottom: 1px solid #333333;
+            border-top: 0px;
+            border-left: 0px;
+            border-right: 1px solid #333333;
+        }
+        
+        table tbody tr td:last-child, table tbody tr th:last-child, table thead tr th:last-child {
+            border-right: 0px;
+        }
+        
+        table colgroup col:first-child {
+            background-color: #e3edf8;
+        }
+    
+        table thead tr th, table tbody tr td {
+            padding: 4px 7px 2px;
+        }
+        
+        table tbody tr:nth-child(even){
+            background-color: #ececec;
+        }
+        
+        table tbody tr:nth-child(od){
+            background-color: #ffffff;
+        }
+	</style>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+	<script type="text/javascript">	
+		
+		function ConvertFormToJSON(form){
+			var array = jQuery(form).serializeArray();
+			var json = {};
+			
+			jQuery.each(array, function() {
+				json[this.name] = this.value || '';
+			});
+			
+			return json;
+		}
+		
+		jQuery(document).on('ready', function() {
+			jQuery('form#add-new-task').bind('submit', function(event){
+				event.preventDefault();
+				
+				var form = this;
+				var json = ConvertFormToJSON(form);
+				var tbody = jQuery('#to-do-list > tbody');
+
+				$.ajax({
+					type: "POST",
+					url: "submit.php",
+					data: json,
+					dataType: "json"
+				}).success(function(state) { 
+					if(state.success === true) {
+						tbody.append('<tr><th scope="row" style="background-color:' + state['color'] + 
+							'"><input type="checkbox" /></th><td>' + state['date'] +
+							'</td><td>' + state['priority'] + '</td><td>' + state['name'] + 
+							'</td><td>' + state['desc'] + '</td><td>' + state['email'] + '</td></tr>');	
+					} else {
+						alert(state.error.join());
+					}
+				}).fail(function(state) { 
+					alert("Failed to add to-do"); 
+				});
+
+				return true;
+			});
+		});
+	</script>	
 </head>
 <body>
-	<div class="heading">
-		<h2 style="font-style: 'Hervetica';">ToDo List Application PHP and MySQL database</h2>
-	</div>
+<div id="page">
+	<!-- [banner] -->
+	<header id="banner">
+		<hgroup>
+			<h1>Creating a simple to-do application - Part 1</h1>
+		</hgroup>		
+	</header>
+	<!-- [content] -->
+	<section id="content">
+		<!-- [to-do] -->
+		<article id="to-do">			
+			<section class="new-to-do">			
+				<header>
+					<h2>Add a new task</h2>
+				</header>
+				<form id="add-new-task">
+					<label for="new-task-name">Name:</label>
+					<input id="new-task-name" name="new-task-name" type="text" required>
+					<label for="new-task-date">Date:</label>
+					<input id="new-task-date" name="new-task-date" type="datetime" required>					
+					<br/>
+					<label for="new-task-priority">Priority:</label>
+					<input id="new-task-priority" name="new-task-priority" type="number" required min="1" max="5" step="1" value="2">
+					<label for="new-task-color">Color:</label>
+					<input id="new-task-color" name="new-task-color" type="color">
+					<br/>
+					<label for="new-task-desc">Description:</label>
+					<input id="new-task-desc" name="new-task-desc" type="text">
+					<br/>
+					<label for="new-task-email">Invite:</label>
+					<input id="new-task-email" name="new-task-email" type="email" multiple>
+					<br />
+					<input type="submit" value="Add new">
+				</form>
+			</section>
+			<section>
+				<header>
+					<h2>To Do list</h2>
+				</header>
+				<table id="to-do-list">
+					<caption>What's up next?</caption>
+					<colgroup>
+						<col />
+						<col />
+						<col />
+						<col />
+						<col />
+						<col />
+					</colgroup>
+					<thead>
+						<tr>
+							<th scope="col"></th>
+							<th scope="col">Date</th>
+							<th scope="col">Priority</th>							
+							<th scope="col">Name</th>
+							<th scope="col">Description</th>
+							<th scope="col">Invitees</th>
+						</tr>
+					</thead>
+					<tbody>			
+<?php
+global $user_id;
+$query = $connection->prepare("SELECT `task_id`, `task_name`, `task_priority`, `task_color`, `task_description`, `task_attendees`, `task_date` FROM `tasks` WHERE `user_id` = ?");
+$query->bind_param("i", $user_id);
+$query->execute();
 
-	<form  id="tasks" method="post" action="index.php" class="input_form">
+$query->bind_result($id, $name, $priority, $color, $description, $attendees, $date);
+while ($query->fetch()) {
+	echo '<tr id="task-' . $id . '"><th scope="row" style="background-color:' . $color . '"><input type="checkbox" /></th><td>' . $date . '</td><td>' . $priority . '</td><td>' . $name . '</td><td>' . $description . '</td><td>' . $attendees . '</td></tr>';
+}
 
-		<label for="tasks-task">Task:</label>
-		<input id="tasks-task" name="task" type="text" required>
-		<br>
-		<!-- <input type="text" name="task" class="task_input"> -->
-		<label for="tasks-date">Date:</label>
-		<input id="tasks-date"  name="date" class="date_input"  type="date" required>
-		<br>
+$query->close();
+?>					
+					</tbody>
+				</table>
+			</section>
+			<footer>
+			</footer>
+		</article>
+			
+	</section>
+	
+</div>
 
-		<label for="tasks-priority">Priority:</label>
-		<input id="tasks-priority" name="priority" type="number" required min="1" max="5" step="1" value="2">
-		<br>	
-		<label for="tasks-descs">Description:</label>
-		<input id="tasks-descs" name="descs" type="text">
-		<br/>
-		<label for="tasks-email">Invite:</label>
-		<input id="tasks-email" name="email" type="email" multiple>
-		<br />
-		<button type="submit" name="task_submit" id="add_btn" class="add_btn">Add Task</button>
-
-
-		<?php if (isset($errors)) { ?>
-			<p><?php echo $errors; ?></p>
-		<?php } ?>
-	</form>
-
-	<table>
-		<thead>
-			<tr>
-				<th >N</th>
-				<th>Tasks</th>
-				<th>Date</th>
-				<th>Priority</th>	
-				<th>Description</th>
-				<th>Email</th>
-				<th >Action</th>
-			</tr>
-		</thead>
-
-		<tbody>
-			<?php 
-		// select all tasks if page is visited or refreshed
-			$tasks = mysqli_query($db, "SELECT * FROM tasks");
-
-			$i = 1; while ($row = mysqli_fetch_array($tasks)) { ?>
-				<tr>
-					<td> <?php echo $i; ?> </td>
-					<td class="task"> <?php echo $row['task']; ?> </td>
-					<td class="date"> <?php echo $row['date']; ?> </td>
-					<td class="priority"> <?php echo $row['priority']; ?> </td>
-					<td class="descs"> <?php echo $row['descs']; ?> </td>
-					<td class="email"> <?php echo $row['email']; ?> </td>
-
-					<td class="delete"> 
-						<a href="index.php?del_task=<?php echo $row['id'] ?>">x</a> 
-					</td>
-				</tr>
-				<?php $i++; } ?>	
-			</tbody>
-		</table>
-
-
-	</body>
-	</html>
-
+</body>
+</html>
