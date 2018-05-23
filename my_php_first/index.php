@@ -7,7 +7,7 @@ require_once('authenticate.php');
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 
 	<title>
-	Creating a simple to-do application - Part 1
+	Creating a simple to-do application - first part
 </title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">
@@ -154,7 +154,7 @@ require_once('authenticate.php');
 					<label for="new-task-name">Name:</label>
 					<input id="new-task-name" name="new-task-name" type="text" required>
 					<label for="new-task-date">Date:</label>
-					<input id="new-task-date" name="new-task-date" type="datetime" required>					
+					<input id="new-task-date" name="new-task-date" class= "date_input" type="date" required>					
 					<br/>
 					<label for="new-task-priority">Priority:</label>
 					<input id="new-task-priority" name="new-task-priority" type="number" required min="1" max="5" step="1" value="2">
@@ -162,7 +162,7 @@ require_once('authenticate.php');
 					<input id="new-task-color" name="new-task-color" type="color">
 					<br/>
 					<label for="new-task-desc">Description:</label>
-					<input id="new-task-desc" name="new-task-desc" type="text">
+					<input id="new-task-desc" name="new-task-desc" type="text" required>
 					<br/>
 					<label for="new-task-email">Invite:</label>
 					<input id="new-task-email" name="new-task-email" type="email" multiple>

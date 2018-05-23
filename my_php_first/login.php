@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	<!-- [banner] -->
 	<header id="banner">
 		<hgroup>
-			<h1>Login</h1>
+			<h1>Login Example</h1>
 		</hgroup>		
 	</header>
 	<!-- [content] -->
