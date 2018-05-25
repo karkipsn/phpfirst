@@ -8,39 +8,7 @@
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 
 	<script>
-
-		jQuery(document).on('ready', function() {
-
-			jQuery('form#add-new-task').bind('submit', function(event){
-				event.preventDefault();
-
-				
-				var form = this;
-				var json = ConvertFormToJSON(form);
-				var tbody = jQuery('#to-do-list > tbody'); 
-
-				$.ajax({
-    type: "POST",
-    url: "submit.php",
-    data: json,
-    dataType: "json"
-}).success(function(state) { 
-    if(state.success === true) {
-        tbody.append('<tr><th scope="row" style="background-color:' + state['color'] + 
-            '"><input type="checkbox" /></th><td>' + state['date'] +
-            '</td><td>' + state['priority'] + '</td><td>' + state['name'] + 
-            '</td><td>' + state['desc'] + '</td><td>' + state['email'] + '</td></tr>');    
-    } else {
-        alert(state.error.join());
-    }
-}).fail(function(state) { 
-    alert("Failed to add to-do"); 
-});
-				return true;  
-
-			});
-		});
-
+		
 
 		function ConvertFormToJSON(form){
 			var array = jQuery(form).serializeArray();
@@ -51,8 +19,38 @@
 			});
 
 			return json;
-
 		}
+
+
+		jQuery(document).on('ready', function() {
+			jQuery('form#add-new-task').bind('submit', function(event){
+				event.preventDefault();
+
+				var form = this;
+				var json = ConvertFormToJSON(form);
+				var tbody = jQuery('#todo > tbody');
+
+				$.ajax({
+					type: "POST",
+					url: "submit.php",
+					data: json,
+					dataType: "json"
+				}).done(function() { 
+					tbody.append('<tr><th scope="row" style="background-color:' + form['new-task-color'].value + 
+						'"><input type="checkbox" /></th><td>' + form['new-task-date'].value +
+						'</td><td>' + form['new-task-priority'].value + '</td><td>' + form['new-task-name'].value + 
+						'</td><td>' + form['new-task-desc'].value + '</td><td>' + form['new-task-email'].value + '</td></tr>');    
+				}).fail(function() { 
+					alert("Failed to add to-do"); 
+				});
+
+				return true;
+			});
+		});
+
+		//To test this you can either create a sample submit.php file or instead of the done method, you can use ‘always’. 
+
+		
 	</script>
 
 	<style type>
@@ -136,7 +134,7 @@
 <body>
 	<form id="add-new-task">
 		<label for="new-task-name">Name:</label>
-		<input id="new-task-name" name="new-task-name" type="text" required>
+		<input id="new-task-name" name="new-task-name" type="text" autocomplete='name' required>
 		<br/>
 		<label for="new-task-date">Date:</label>
 		<input id="new-task-date" name="new-task-date" type="datetime" required>                    
@@ -150,12 +148,12 @@
 		<input id="new-task-desc" name="new-task-desc" type="text">
 		<br/>
 		<label for="new-task-email">Invite:</label>
-		<input id="new-task-email" name="new-task-email" type="email" multiple>
+		<input id="new-task-email" name="new-task-email" type="email" autocomplete='email' multiple>
 		<br />
 		<input type="submit" value="Add New">
 	</form>
 
-	<table id="to-do-list">
+	<table id="todo">
 		<caption>What's up next?</caption>
 		<colgroup>
 			<col />
