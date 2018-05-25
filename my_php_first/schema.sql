@@ -30,8 +30,8 @@ CREATE TABLE IF NOT EXISTS `tasks` (
 
 INSERT INTO `users` ( `user_login`, `user_password`, `user_firstname`, 
 	`user_surname`, `user_email`, `user_registered` )
-SELECT 'developerdrive', PASSWORD('to-do-password'), 'developer',
-	'drive', 'developer@email.com', NOW();
+SELECT 'psn', PASSWORD('psn'), 'developer',
+	'drive', 'psn@psn.com', NOW();
 	
 CREATE TABLE IF NOT EXISTS `sessions` (
   `session_id` bigint(20) unsigned NOT NULL auto_increment,
