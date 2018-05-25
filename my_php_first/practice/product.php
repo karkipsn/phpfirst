@@ -4,7 +4,7 @@
 $errors = "";
 
 	// connect to database
-$db = mysqli_connect("localhost", "root", "", "to-do-list");
+$db = mysqli_connect("localhost", "root", "", "todo");
 
 	// insert a quote if submit button is clicked
 if (isset($_POST['product_submit'])) {

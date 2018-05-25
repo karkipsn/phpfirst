@@ -4,7 +4,7 @@ $password = null;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
-	require_once('database.php');
+	include ('database.php');
 	
 	if(!empty($_POST["username"]) && !empty($_POST["password"])) {
 		$username = $_POST["username"];

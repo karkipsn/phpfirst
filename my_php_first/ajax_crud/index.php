@@ -10,6 +10,7 @@
 <body>
   <div class="wrapper">
   	<?php echo $comments; ?>
+    
   	<form class="comment_form">
       <div>
         <label for="name">Name:</label>

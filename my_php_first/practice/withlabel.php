@@ -3,7 +3,7 @@
     <head>
         <title>My first PHP Website</title>
 
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 
         <script>
 
@@ -12,7 +12,7 @@
                 jQuery('form#add-new-task').bind('submit', function(event){
                     event.preventDefault();
 
-                    var tbody = jQuery('#to-do-list > tbody'); 
+                    var tbody = jQuery('#todo > tbody'); 
 
                     tbody.append('<tr><th scope="row" style="background-color:' + this['new-task-color'].value + 
                         '"><input type="checkbox" /></th><td>' + this['new-task-date'].value +
@@ -131,7 +131,7 @@
 </form>
 
 
-<table id="to-do-list">
+<table id="todo">
     <caption>What's up next?</caption>
     <colgroup>
         <col />

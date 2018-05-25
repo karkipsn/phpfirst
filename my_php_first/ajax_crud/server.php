@@ -3,6 +3,7 @@ $conn = mysqli_connect('localhost', 'root', '', 'todo');
 if (!$conn) {
 	die('Connection failed ' . mysqli_error($conn));
 }
+
 if (isset($_POST['save'])) {
 	$name = $_POST['name'];
 	$comment = $_POST['comment'];
@@ -11,7 +12,9 @@ if (isset($_POST['save'])) {
 	//if posted successfully
 
 	if (mysqli_query($conn, $sql)) {
+
 		$id = mysqli_insert_id($conn);
+		
 		$saved_comment = '<div class="comment_box">
 		<span class="delete" data-id="' . $id . '" >delete</span>
 		<span class="edit" data-id="' . $id . '">edit</span>
